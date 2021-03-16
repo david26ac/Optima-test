@@ -18,6 +18,17 @@ class Score_table extends React.Component{
             new_matches : []
         }
     }
+    componentDidMount(){
+        console.log(localStorage)
+        if(localStorage.getItem("matches_played")){
+            this.setState({
+                new_matches : JSON.parse(localStorage.getItem("matches_played"))
+            }, () =>{
+                console.log(this.state.new_matches)
+            })
+        }
+        // localStorage.removeItem("matches_played");
+    }
     score(e){
         if(e.currentTarget.id === 'score_home'){
             this.setState({
@@ -33,13 +44,16 @@ class Score_table extends React.Component{
         let new_match_played = {
             country_1 : {
                 country_name : this.state.actual_playing.country_1,
-                score : this.state.home_score
+                score : this.state.home_score,
             },
             country_2 : {
                 country_name : this.state.actual_playing.country_2,
                 score : this.state.away_score
-            }
+            },
+            total : this.state.home_score + this.state.away_score,
+            match : this.state.actual_playing.country_1 + this.state.actual_playing.country_2
         }
+
         this.setState(prevState => ({
             playing : false,
             home_score : 0,
@@ -47,8 +61,26 @@ class Score_table extends React.Component{
             new_matches : [
                 ...prevState.new_matches, new_match_played
             ]
-        }))
+        }), () => {
+            let arrayMatches = []
+            arrayMatches = this.state.new_matches.sort( (a,b) => {
+                if(b.total === a.total){
+                    console.log('equals!')
+                    console.log(a.match + " a ")
+                    console.log(b.match + " b ")
+                    a.total++
+                }
+                return b.total - a.total
+            })
+            this.setState({
+                new_matches : arrayMatches
+            }, () =>{
+                console.log(this.state.new_matches)
+                localStorage.setItem('matches_played', JSON.stringify(this.state.new_matches))
+            })
+        })
         
+
     }
     getTeam(e){
         console.log(e.currentTarget.value)
@@ -76,8 +108,13 @@ class Score_table extends React.Component{
         }
     }
     start(){
-        let first_country = this.state.actual_playing.country_1
-        let second_country = this.state.actual_playing.country_2
+        if(document.getElementById('first_country')){
+            var first_country = document.getElementById('first_country').value
+            var second_country = document.getElementById('second_country').value
+        } else{
+            var first_country = this.state.actual_playing.country_1
+            var second_country = this.state.actual_playing.country_2
+        }
         this.setState({
             playing : true,
             home_score : 0,
@@ -90,7 +127,6 @@ class Score_table extends React.Component{
         })
     }
     render(){
-
         return(
             <div className="score">
                 <h1>Score board</h1>
@@ -118,8 +154,8 @@ class Score_table extends React.Component{
                     </div>: ''}
                     {this.state.playing == false ?
                     <div className="cont">
-                        <Form.Control value={this.state.actual_playing.country_1} as="select" size="lg" id='first_country' onChange={this.getTeam.bind(this)} custom>
-                            <option>Mexico</option>
+                        <Form.Control as="select" size="lg" id='first_country' onChange={this.getTeam.bind(this)} custom>
+                            <option disabled>México</option>
                             <option>Canada</option>
                             <option>Spain</option>
                             <option>Brazil</option>
@@ -130,9 +166,9 @@ class Score_table extends React.Component{
                             <option>Argentina</option>
                             <option>Australia</option>
                         </Form.Control>
-                        <Form.Control value={this.state.actual_playing.country_2} as="select" size="lg" id='second_country' onChange={this.getTeam.bind(this)} custom>
-                            <option>Canada</option>
-                            <option>Mexico</option>
+                        <Form.Control as="select" size="lg" id='second_country' onChange={this.getTeam.bind(this)} custom>
+                            <option disabled>Canada</option>
+                            <option>México</option>
                             <option>Spain</option>
                             <option>Brazil</option>
                             <option>Germany</option>
@@ -171,7 +207,6 @@ class Score_table extends React.Component{
                     )
                 }
             </div>
-            
         )
     }
 }

@@ -28,5 +28,16 @@ describe('component Score', () =>{
         button_score.simulate('click', {"currentTarget":{"id": "score_home"}})
         expect(scoreboard.state().home_score).toBe(1)
     })
+    it('it Should add score', () => {
+        const scoreboard = shallow(<Score_table/>) 
+        const button_start = scoreboard.find('#start_button')
+        button_start.simulate('click');
+        const button_score = scoreboard.find('#score_home')
+        button_score.simulate('click', {"currentTarget":{"id": "score_home"}})
+        button_score.simulate('click', {"currentTarget":{"id": "score_home"}})
+        const button_finish = scoreboard.find('#finish_button')
+        button_finish.simulate('click')
+        expect(scoreboard.state().new_matches.length).toBe(1)
+    })
 })
 
