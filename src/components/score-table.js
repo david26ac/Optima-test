@@ -1,10 +1,13 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button'
+
+//import bootstrap assets
 import Form from 'react-bootstrap/Form'
 
 class Score_table extends React.Component{
     constructor(props){
         super(props);
+        //declare state of the component
         this.state = {
             home_score : 0,
             away_score : 0,
@@ -17,13 +20,17 @@ class Score_table extends React.Component{
         }
     }
     componentDidMount(){
+        //add local storage of matches played to state of the component
         if(localStorage.getItem("matches_played")){
             this.setState({
                 new_matches : JSON.parse(localStorage.getItem("matches_played"))
             })
         }
+        //remove localstorage for develop tests
         // localStorage.removeItem("matches_played");
     }
+
+    //function to add score
     score(e){
         if(e.currentTarget.id === 'score_home'){
             this.setState({
@@ -35,7 +42,9 @@ class Score_table extends React.Component{
             })
         }
     }
+    //function to finish Match and add it to list of matches played
     finish(){
+        //set a new object to add
         let new_match_played = {
             country_1 : {
                 country_name : this.state.actual_playing.country_1,
@@ -48,7 +57,7 @@ class Score_table extends React.Component{
             total : this.state.home_score + this.state.away_score,
             match : this.state.actual_playing.country_1 + this.state.actual_playing.country_2
         }
-
+        //add it to state of new_matches list
         this.setState(prevState => ({
             playing : false,
             home_score : 0,
@@ -56,14 +65,17 @@ class Score_table extends React.Component{
             new_matches : [
                 ...prevState.new_matches, new_match_played
             ]
-        }), () => {
+        }), //wait for state to update and launch function to sort list of matches
+            () => {
             let arrayMatches = []
             arrayMatches = this.state.new_matches.sort( (a,b) => {
+                //return the lastest match
                 if(b.total === a.total){
                     a.total++
                 }
                 return b.total - a.total
             })
+            //define the new sorted list
             this.setState({
                 new_matches : arrayMatches
             }, () =>{
@@ -73,11 +85,13 @@ class Score_table extends React.Component{
         
 
     }
+    //get the home and away team from inputs
     getTeam(e){
         let id = e.currentTarget.id;
-        
+        //check input
         if(id === 'first_country'){
             let country = e.currentTarget.value;
+            //disabled option to prevent the user for select the same team
             document.getElementById('second_country').childNodes.forEach(option => {
                 if(option.text === country){
                     option.setAttribute('disabled', true)
@@ -88,6 +102,7 @@ class Score_table extends React.Component{
 
         } else{
             let country = e.currentTarget.value;
+            //disabled option to prevent the user for select the same team
             document.getElementById('first_country').childNodes.forEach(option => {
                 if(option.text === country){
                     option.setAttribute('disabled', true)
@@ -97,6 +112,7 @@ class Score_table extends React.Component{
             });
         }
     }
+    // start button click, get the teams to be set match
     start(){
         let _this = this;
         if(document.getElementById('first_country')){
@@ -127,6 +143,7 @@ class Score_table extends React.Component{
                 <h1>Score board</h1>
                 {this.state.playing}
                 <div className="board">
+                    {/* display Board if there are teams playing*/}
                     { this.state.playing === true ?
                     <div className="cont">
                         <h2>Now playing</h2>
@@ -175,7 +192,7 @@ class Score_table extends React.Component{
                         </Form.Control>
                     </div>
                     : ''}
-                    
+                    {/* display buttons depend of the teams are plating or not */}
                     {this.state.playing === false 
                         ?<Button className='btn-dark' id='start_button' variant="light" onClick={this.start.bind(this)}>Start match</Button>
                         :<Button className='btn-dark' id='finish_button' variant="light" onClick={this.finish.bind(this)}>Finish match</Button>
@@ -183,6 +200,7 @@ class Score_table extends React.Component{
                     
                 </div>
                 <div className="cont">
+                    {/* display if there is a list of matches played */}
                     {this.state.new_matches.length > 0 &&
                         this.state.new_matches.map( 
                             (flag, key) => {
