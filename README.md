@@ -3,6 +3,8 @@ Football World Cup Score Board built with React.
 
 Other libraries:
 Bootstrap
+Jest
+Enzyme
 
 ### `npm start`
 
