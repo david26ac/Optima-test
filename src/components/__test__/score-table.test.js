@@ -37,7 +37,11 @@ describe('component Score', () =>{
         button_score.simulate('click', {"currentTarget":{"id": "score_home"}})
         const button_finish = scoreboard.find('#finish_button')
         button_finish.simulate('click')
-        expect(scoreboard.state().new_matches.length).toBe(1)
+        let added_match = null
+        if(scoreboard.state().new_matches.length > 1){
+            added_match = true;
+        }
+        expect(added_match).toBe(true)
     })
 })
 

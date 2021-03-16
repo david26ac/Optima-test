@@ -1,8 +1,6 @@
 import React from 'react';
-import Table from 'react-bootstrap/Table'
 import Button from 'react-bootstrap/Button'
 import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
 
 class Score_table extends React.Component{
     constructor(props){
@@ -19,12 +17,9 @@ class Score_table extends React.Component{
         }
     }
     componentDidMount(){
-        console.log(localStorage)
         if(localStorage.getItem("matches_played")){
             this.setState({
                 new_matches : JSON.parse(localStorage.getItem("matches_played"))
-            }, () =>{
-                console.log(this.state.new_matches)
             })
         }
         // localStorage.removeItem("matches_played");
@@ -65,9 +60,6 @@ class Score_table extends React.Component{
             let arrayMatches = []
             arrayMatches = this.state.new_matches.sort( (a,b) => {
                 if(b.total === a.total){
-                    console.log('equals!')
-                    console.log(a.match + " a ")
-                    console.log(b.match + " b ")
                     a.total++
                 }
                 return b.total - a.total
@@ -75,7 +67,6 @@ class Score_table extends React.Component{
             this.setState({
                 new_matches : arrayMatches
             }, () =>{
-                console.log(this.state.new_matches)
                 localStorage.setItem('matches_played', JSON.stringify(this.state.new_matches))
             })
         })
@@ -83,7 +74,6 @@ class Score_table extends React.Component{
 
     }
     getTeam(e){
-        console.log(e.currentTarget.value)
         let id = e.currentTarget.id;
         
         if(id === 'first_country'){
@@ -108,23 +98,28 @@ class Score_table extends React.Component{
         }
     }
     start(){
+        let _this = this;
         if(document.getElementById('first_country')){
-            var first_country = document.getElementById('first_country').value
-            var second_country = document.getElementById('second_country').value
+            let first_country = document.getElementById('first_country').value
+            let second_country = document.getElementById('second_country').value
+            setStateStart(first_country,second_country,_this)
         } else{
-            var first_country = this.state.actual_playing.country_1
-            var second_country = this.state.actual_playing.country_2
+            let first_country = this.state.actual_playing.country_1
+            let second_country = this.state.actual_playing.country_2
+            setStateStart(first_country,second_country,_this)
         }
-        this.setState({
-            playing : true,
-            home_score : 0,
-            away_score : 0,
-            actual_playing : {
-                country_1 : first_country,
-                country_2 : second_country
-            }
 
-        })
+        function setStateStart(first_country,second_country, __this){
+            __this.setState({
+                playing : true,
+                home_score : 0,
+                away_score : 0,
+                actual_playing : {
+                    country_1 : first_country,
+                    country_2 : second_country
+                }
+            })
+        }
     }
     render(){
         return(
@@ -152,7 +147,7 @@ class Score_table extends React.Component{
                             </div>
                         </div>
                     </div>: ''}
-                    {this.state.playing == false ?
+                    {this.state.playing === false ?
                     <div className="cont">
                         <Form.Control as="select" size="lg" id='first_country' onChange={this.getTeam.bind(this)} custom>
                             <option disabled>México</option>
@@ -181,31 +176,35 @@ class Score_table extends React.Component{
                     </div>
                     : ''}
                     
-                    {this.state.playing == false 
+                    {this.state.playing === false 
                         ?<Button className='btn-dark' id='start_button' variant="light" onClick={this.start.bind(this)}>Start match</Button>
                         :<Button className='btn-dark' id='finish_button' variant="light" onClick={this.finish.bind(this)}>Finish match</Button>
                     }
                     
                 </div>
-                {this.state.new_matches.length > 0 &&
-                    this.state.new_matches.map( 
-                        (flag, key) => {
-                            return(
-                                <div key={flag} className="final_core" id={key}>
-                                    <div className="final_score">
-                                        <div className="box_score">
-                                            {flag.country_1.country_name + " " + flag.country_1.score}
-                                        </div>
-                                        <span>VS</span>
-                                        <div className="box_score">
-                                            {flag.country_2.country_name + " " + flag.country_2.score}
+                <div className="cont">
+                    {this.state.new_matches.length > 0 &&
+                        this.state.new_matches.map( 
+                            (flag, key) => {
+                                return(
+                                    <div key={flag} className="final_core" id={key}>
+                                        <div className="final_score">
+                                            <div className="box_score">
+                                                {flag.country_1.country_name}
+                                                <span>{flag.country_1.score}</span>
+                                            </div>
+                                            <span>VS</span>
+                                            <div className="box_score">
+                                                <span>{flag.country_2.score}</span>
+                                                {flag.country_2.country_name}
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                        }
-                    )
-                }
+                                )
+                            }
+                        )
+                    }
+                </div>
             </div>
         )
     }

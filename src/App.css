@@ -1,6 +1,9 @@
 .score{
   padding: 45px 0;
 }
+h1{
+  text-align: center;
+}
 .locals{
   display: flex;
   justify-content: center;
@@ -28,6 +31,7 @@
 }
 .board h2{
   text-align: center;
+  color: green;
 }
 .board button{
   display: block;
@@ -39,9 +43,15 @@
   align-items: center;
   margin: 0 auto;
 }
+.final_score span{
+  margin: 0 15px;
+}
 .cont{
   width: 50%;
   margin: 0 auto;
+}
+select.custom-select-lg{
+  color: black;
 }
 .box_score{
   background-color: black;
@@ -49,7 +59,17 @@
   border: 1px solid white;
   color: white;
   width: 50%;
+  display: flex;
+  justify-content: space-between;
 }
 .custom-select-lg{
   margin: 5px 0;
+}
+@media screen and (max-width: 767px){
+  .cont{
+    width: 100%;
+  }
+  .final_score span {
+    margin: 0 6px;
+  }
 }
